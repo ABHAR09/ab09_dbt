@@ -1,0 +1,17 @@
+version: 2
+sources: 
+  - name: RAW
+    database: "DEMO_DB"  
+    schema: TEST_DA  
+    tables:
+      - name: SAMPLE_PRODUCT_DATA
+
+  - name: AUDIT
+    database: "ESG_US_{{target.name|upper}}_DB"
+    schema: ESG_ETL_ADMIN
+    tables:
+      - name: BATCH_CONFIG
+      - name: JOB_CONFIG
+      - name: BATCH_RUN_LOG
+      - name: JOB_RUN_LOG
+      
