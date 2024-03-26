@@ -1,6 +1,5 @@
 {% macro job_log_start() %}
-
---job info extraction 
+/*job info extraction*/ 
 {% set job_info %}
     select job_id, job_name, batch_id from
     {{source('AUDIT','JOB_CONFIG')}} 
@@ -10,13 +9,12 @@
 {% if execute %}
     {% set job_id = results.columns[0].values()[0] %}
     {% set job_name = results.columns[1].values()[0] %}
-    {% set batch_id = results.columns[1].values()[0] %}
+    {% set batch_id = results.columns[2].values()[0] %}
 {% endif %}
---batch info extraction
-{#
+/*batch info extraction*/
 {% set batch_info %}
     select batch_run_id from
-    {{source('AUDIT','BATCH_CONFIG')}} 
+    {{source('AUDIT','BATCH_RUN_LOG')}} 
     WHERE batch_id  = {{batch_id}}
     order by batch_run_id desc
 {% endset %}
@@ -24,8 +22,8 @@
 {% if execute %}
     {% set batch_run_id = results.columns[0].values()[0] %}
 {% endif %}
-#}
---Insert query for insert into job_run_log 
+
+/*Insert query for insert into job_run_log*/ 
 {% set insert_query %}
 INSERT INTO
     {{ source('AUDIT', 'JOB_RUN_LOG') }}
@@ -42,7 +40,7 @@ INSERT INTO
     values 
     ( 
         {{job_id}},
-        null, 
+        {{batch_run_id}}, 
         0,
         0,
         'STARTED',
